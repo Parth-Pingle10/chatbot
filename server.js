@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import stopword from 'stopword';
-const port = process.env.PORT || 3000;
+const port = 3000
 const app = express()
 app.use(cors());
 app.use(express.json());
