@@ -2,15 +2,30 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import stopword from 'stopword';
-const port = 3000
+const port = process.env.PORT || 3000;
 const app = express()
 app.use(cors());
 app.use(express.json());
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-mongoose.connect('mongodb://localhost:27017/Chatbot', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+// This is required when using ES modules instead of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from public folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Optional: fallback route
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
 });
+
+mongoose.connect(process.env.MONGODB_URI
+    , {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
 
 const Chatbot = mongoose.model('Chatbot', new mongoose.Schema({
     question: String,
