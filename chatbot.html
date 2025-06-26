@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="og-removebg-preview.png" type="image/png">
+    <title>Praju</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><img src="og-removebg-preview.png" class="image" onclick="sidebar()"></li>
+            <li class="logo" onclick="sidebar()">
+                <div class="p1">Praju</div>
+                <div class="p2">Code. Connect. Control</div>
+            </li>
+            <li><img src="trash-removebg-preview.png" class="delete" onclick="delete1()"> </li>
+            <li><img src="sun-removebg-preview.png" class="toggle" id="change" onclick="toggleTheme()"> </li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="contain" id="contain"></div>
+    </main>
+    <footer>
+        <ul>
+            <li>
+                <div id="inputMessage" contenteditable="true" data-placeholder="Type your message..." autocorrect="off"
+                    autocapitalize="off" spellcheck="false"></div>
+            </li>
+            <li><img src="microphone-removebg-preview (1).png" class="mic" id="mic"></li>
+            <li><img src="images-removebg-preview.png" class="send" id="send" onclick="sendMessage()"></li>
+        </ul>
+    </footer>
+    <div class="sidebar">
+        <div class="navbar">
+            <ul>
+                <li><img src="og-removebg-preview.png" class="image" onclick="remove()"></li>
+                <li class="logo" onclick="remove()">
+                    <div class="p1">Praju</div>
+
+                </li>
+            </ul>
+        </div>
+        <div class="list">
+            <ul>
+                <li class="chat">New Chat</li>
+                <li>
+                    <div class="feedback-container">
+                        <div class="feedback" id="feedback-btn">Feed Back</div>
+                        <input type="text" id="back" class="back" placeholder="Give us your FeedBack :)" />
+                    </div>
+                </li>
+
+                <li class="history">History</li>
+            </ul>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
