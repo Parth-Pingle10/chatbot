@@ -113,7 +113,6 @@ function delete1() {
 
 async function getanswer(question) {
 
-
 const response = await fetch("https://chatbot-2lcw.onrender.com/getanswer", {
         method: "POST",
         headers: {
@@ -133,3 +132,46 @@ const response = await fetch("https://chatbot-2lcw.onrender.com/getanswer", {
         answer.textContent = data.message || "Error getting response";
     }
 }
+async function clearchat(){
+
+    const chatmessages=[];
+    if(chatmessages.length===0)return;
+try{
+    const res=await fetch("https://chatbot-2lcw.onrender.com/savechat",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify(chatmessages.map(m=>({
+            question:m.role==="user"?m.text:'',
+            answer:m.role==="bot"?m.text:''
+        })).filter(m=>m.question||m.answer))
+    });
+    document.getElementById("contain").innerHTML='';
+    chatmessages.length=0;
+    }catch(err){
+        console.error("Failed to save chat:", err);
+    }
+}
+
+document.getElementById("back").addEventListener('keydown',async (e)=>{
+    if(e.key==='Enter'){
+        const mess=document.getElementById("back").value.trim();
+    }if(mess!=''){
+        
+        try{
+        const res1=await fetch("https://chatbot-2lcw.onrender.com/feedback",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                feedBack:[{text:mess}]
+            })
+    
+    });
+    document.getElementById("back").innerHTML='';
+    }catch(err){
+        console.error("Failed to upload:", err);
+    }}});
+    

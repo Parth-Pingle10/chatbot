@@ -19,6 +19,21 @@ const Chatbot = mongoose.model('chatbot', new mongoose.Schema({
     answer: String,
 }));
 
+const chat = mongoose.model('chat', new mongoose.Schema({
+    messages: [{
+        sender: String,
+        text: String,
+        timestamp: { type: Date, default: Date.now }
+    }],
+    createdAt: [{
+        type: Date,
+        default: Date.now
+    }]
+}));
+
+const Feedback=mongoose.model('feedback',new mongoose.Schema({
+    feedback:String
+}))
 // Add knowledgebase data (single or multiple entries)
 app.post('/knowledgebase', async (req, res) => {
     const data = req.body;
@@ -58,27 +73,60 @@ app.post('/getanswer', async (req, res) => {
 
     try {
         const allQuestion = await Chatbot.find();
-        const matchingentry = [];
+        let highestscore = 0;
+        let bestmatch = null;
+        let ambigious = false;
+
 
         allQuestion.forEach(entry => {
             const words = stopword.removeStopwords(entry.question.toLowerCase().replace(/[^\w\s]/g, '').split(" "));
             const count = input.filter(word => words.includes(word));
-            if (count.length > 0) {
-                matchingentry.push(entry);
+            if (count > highestscore) {
+                highestscore = count;
+                bestmatch = entry;
+                ambigious = false;
+            } else if (count == highestscore && count > 0) {
+                ambigious = true;
             }
+            if (highestscore == 0) {
+                return res.status(404).json({ message: "No matching found" });
+            }
+            if (ambigious) {
+                return res.status(409).json({ message: "Ambiguous question. Please specify further." });
+            }
+            return res.status(200).json({ answer: bestmatch.answer });
         });
 
-        if (matchingentry.length > 1) {
-            return res.status(409).json({ message: "Ambiguous question. Please specify further." });
-        } else if (matchingentry.length === 1) {
-            return res.status(200).json({ answer: matchingentry[0].answer });
-        } else {
-            return res.status(404).json({ message: "No matching answer found." });
-        }
+
     } catch (error) {
         return res.status(500).json({ message: "Error while searching", error: error.message });
     }
 });
+app.post('/savechat',async(req,res)=>{
+    const{messages}=req.body;
+    if(!messages||!Array.isArray(messages)){
+        return  res.status(400).json({message:"invalid chat data"})
+    }
+    try{
+        const newchat=new chat({messages});
+        await newchat.save();
+                res.status(201).json({ message: "Chat saved", chatId: newchat._id });
+    } catch (error) {
+        res.status(500).json({ message: "Error saving chat", error: error.message });
+    }
+    
+});
+app.post('/feedback',async(req,res)=>{
+    const{feedback}=req.body;
+    try{
+        const feed=new Feedback({feedback});
+        await feed.save();
+             res.status(201).json({ message: "Feedback saved", feedback: feed });
+
+    } catch (error) {
+        res.status(500).json({ message: "Error", error: error.message });
+    }
+})
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
