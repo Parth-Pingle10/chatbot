@@ -25,10 +25,10 @@ const chat = mongoose.model('chat', new mongoose.Schema({
         text: String,
         timestamp: { type: Date, default: Date.now }
     }],
-    createdAt: [{
+    createdAt: {
         type: Date,
         default: Date.now
-    }]
+    }
 }));
 
 const Feedback=mongoose.model('feedback',new mongoose.Schema({
