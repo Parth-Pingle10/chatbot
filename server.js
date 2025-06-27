@@ -14,7 +14,7 @@ mongoose.connect(process.env.MONGODB_URI, {
     useUnifiedTopology: true,
 });
 
-const Chatbot = mongoose.model('Chatbot', new mongoose.Schema({
+const Chatbot = mongoose.model('chatbot', new mongoose.Schema({
     question: String,
     answer: String,
 }));
