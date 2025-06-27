@@ -80,12 +80,12 @@ app.post('/getanswer', async (req, res) => {
 
         allQuestion.forEach(entry => {
             const words = stopword.removeStopwords(entry.question.toLowerCase().replace(/[^\w\s]/g, '').split(" "));
-            const count = input.filter(word => words.includes(word));
-            if (count > highestscore) {
-                highestscore = count;
+            const matches = input.filter(word => words.includes(word));
+            if (matches > highestscore) {
+                highestscore = matches;
                 bestmatch = entry;
                 ambigious = false;
-            } else if (count == highestscore && count > 0) {
+            } else if (matches == highestscore && matches > 0) {
                 ambigious = true;
             }
             if (highestscore == 0) {
