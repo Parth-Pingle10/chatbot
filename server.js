@@ -69,39 +69,46 @@ app.post('/getanswer', async (req, res) => {
         return res.status(400).json({ message: 'Question is required' });
     }
 
-    const input = stopword.removeStopwords(question.toLowerCase().replace(/[^\w\s]/g, '').split(" "));
+    const input = stopword.removeStopwords(
+        question.toLowerCase().replace(/[^\w\s]/g, '').split(" ")
+    );
 
     try {
-        const allQuestion = await Chatbot.find();
+        const allQuestions = await Chatbot.find();
         let highestscore = 0;
         let bestmatch = null;
-        let ambigious = false;
+        let ambiguous = false;
 
-
-        allQuestion.forEach(entry => {
-            const words = stopword.removeStopwords(entry.question.toLowerCase().replace(/[^\w\s]/g, '').split(" "));
+        allQuestions.forEach(entry => {
+            const words = stopword.removeStopwords(
+                entry.question.toLowerCase().replace(/[^\w\s]/g, '').split(" ")
+            );
             const matches = input.filter(word => words.includes(word)).length;
+
             if (matches > highestscore) {
                 highestscore = matches;
                 bestmatch = entry;
-                ambigious = false;
-            } else if (matches == highestscore && matches > 0) {
-                ambigious = true;
+                ambiguous = false;
+            } else if (matches === highestscore && matches > 0) {
+                ambiguous = true;
             }
-            if (highestscore == 0) {
-                return res.status(404).json({ message: "No matching found" });
-            }
-            if (ambigious) {
-                return res.status(409).json({ message: "Ambiguous question. Please specify further." });
-            }
-            return res.status(200).json({ answer: bestmatch.answer });
         });
 
+        // Move response logic OUTSIDE the loop
+        if (highestscore === 0) {
+            return res.status(404).json({ message: "No matching found" });
+        }
+        if (ambiguous) {
+            return res.status(409).json({ message: "Ambiguous question. Please specify further." });
+        }
+
+        return res.status(200).json({ answer: bestmatch.answer });
 
     } catch (error) {
         return res.status(500).json({ message: "Error while searching", error: error.message });
     }
 });
+
 app.post('/savechat',async(req,res)=>{
     const{messages}=req.body;
     if(!messages||!Array.isArray(messages)){
