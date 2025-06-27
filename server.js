@@ -2,24 +2,11 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import stopword from 'stopword';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 const port = process.env.PORT || 3000;
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Serve static files from public folder
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Fallback route - serve chatbot.html
-app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'chatbot.html'));
-});
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
@@ -32,6 +19,7 @@ const Chatbot = mongoose.model('Chatbot', new mongoose.Schema({
     answer: String,
 }));
 
+// Add knowledgebase data (single or multiple entries)
 app.post('/knowledgebase', async (req, res) => {
     const data = req.body;
 
@@ -51,13 +39,14 @@ app.post('/knowledgebase', async (req, res) => {
     } else {
         try {
             const entries = await Chatbot.insertMany(data);
-            res.status(201).json({ message: "Multiple entries are added", entries });
+            res.status(201).json({ message: "Multiple entries added", entries });
         } catch (error) {
-            res.status(500).json({ message: "Error while adding multiple entries", error: error.message });
+            res.status(500).json({ message: "Error while adding entries", error: error.message });
         }
     }
 });
 
+// Get answer for a question
 app.get('/getanswer', async (req, res) => {
     const { question } = req.query;
 
@@ -92,5 +81,5 @@ app.get('/getanswer', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`Server running on port ${port}`);
 });
