@@ -125,3 +125,49 @@ document.getElementById("back").addEventListener("keydown", async (e) => {
         }
     }
 });
+
+function toggleTheme() {
+    const img = document.getElementById("change");
+    const nav = document.querySelector("nav");
+    const main = document.querySelector("main");
+    const footer = document.querySelector("footer");
+    const input = document.getElementById("inputMessage");
+    const backInput = document.querySelector(".back");
+    const sidebar = document.querySelector(".sidebar");
+
+    const isSun = img.src.includes("moon-removebg-preview.png");
+
+    if (isSun) {
+
+        img.src = "sun-removebg-preview.png";
+        nav.style.backgroundColor = "#0D0D0D";
+        main.style.backgroundColor = "#1A1A1A";
+        footer.style.backgroundColor = "#0D0D0D";
+        input.style.backgroundColor = "#3a3a3a";
+        input.style.color = "#f5f5f5";
+        sidebar.style.backgroundColor = "rgba(30, 30, 30, 0.9)";
+        backInput.style.backgroundColor = "#2a2a2a";
+        backInput.style.color = "#f5f5f5";
+
+
+
+        document.querySelectorAll(".feedback, .chat, .history").forEach(el => {
+            el.style.color = "#FFFBDB";
+        });
+    } else {
+
+        img.src = "moon-removebg-preview.png";
+        nav.style.backgroundColor = "#A86D79";
+        main.style.backgroundColor = "#F6EAEA";
+        footer.style.backgroundColor = "#A86D79";
+        input.style.backgroundColor = "rgba(125, 100, 110, 1)";
+        input.style.color = "#29291F";
+        sidebar.style.backgroundColor = "rgba(255, 235, 238, 0.8)";
+        backInput.style.backgroundColor = "#ffffff";
+        backInput.style.color = "#0D0D0D";
+
+        document.querySelectorAll(".feedback, .chat, .history").forEach(el => {
+            el.style.color = "#0D0D0D";
+        });
+    }
+}
