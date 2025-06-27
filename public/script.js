@@ -114,7 +114,13 @@ function delete1() {
 async function getanswer(question) {
 
 
-    const response = await fetch(`http://localhost:3000/getanswer?question=${encodeURIComponent(question)}`);
+const response = await fetch("https://chatbot-2lcw.onrender.com/getanswer", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ question: question })
+    });
     const data = await response.json();
 
     const answer = document.createElement("div");
@@ -124,6 +130,6 @@ async function getanswer(question) {
     if (response.ok) {
         answer.textContent = data.answer;
     } else {
-        answer.textContent = data.message;
+        answer.textContent = data.message || "Error getting response";
     }
 }

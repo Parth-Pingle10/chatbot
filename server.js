@@ -47,8 +47,8 @@ app.post('/knowledgebase', async (req, res) => {
 });
 
 // Get answer for a question
-app.get('/getanswer', async (req, res) => {
-    const { question } = req.query;
+app.post('/getanswer', async (req, res) => {
+    const { question } = req.body;
 
     if (!question) {
         return res.status(400).json({ message: 'Question is required' });
