@@ -31,8 +31,8 @@ const chat = mongoose.model('chat', new mongoose.Schema({
     }
 }));
 
-const Feedback=mongoose.model('feedback',new mongoose.Schema({
-    feedback:String
+const Feedback = mongoose.model('feedback', new mongoose.Schema({
+    feedback: String
 }))
 // Add knowledgebase data (single or multiple entries)
 app.post('/knowledgebase', async (req, res) => {
@@ -83,13 +83,15 @@ app.post('/getanswer', async (req, res) => {
             const words = stopword.removeStopwords(
                 entry.question.toLowerCase().replace(/[^\w\s]/g, '').split(" ")
             );
-            const matches = input.filter(word => words.includes(word)).length;
 
-            if (matches > highestscore) {
-                highestscore = matches;
+            const matches = input.filter(word => words.includes(word));
+            const matchCount = matches.length;
+
+            if (matchCount > highestscore) {
+                highestscore = matchCount;
                 bestmatch = entry;
                 ambiguous = false;
-            } else if (matches === highestscore && matches > 0) {
+            } else if (matchCount === highestscore && matchCount > 0) {
                 ambiguous = true;
             }
         });
@@ -109,26 +111,26 @@ app.post('/getanswer', async (req, res) => {
     }
 });
 
-app.post('/savechat',async(req,res)=>{
-    const{messages}=req.body;
-    if(!messages||!Array.isArray(messages)){
-        return  res.status(400).json({message:"invalid chat data"})
+app.post('/savechat', async (req, res) => {
+    const { messages } = req.body;
+    if (!messages || !Array.isArray(messages)) {
+        return res.status(400).json({ message: "invalid chat data" })
     }
-    try{
-        const newchat=new chat({messages});
+    try {
+        const newchat = new chat({ messages });
         await newchat.save();
-                res.status(201).json({ message: "Chat saved", chatId: newchat._id });
+        res.status(201).json({ message: "Chat saved", chatId: newchat._id });
     } catch (error) {
         res.status(500).json({ message: "Error saving chat", error: error.message });
     }
-    
+
 });
-app.post('/feedback',async(req,res)=>{
-    const{feedback}=req.body;
-    try{
-        const feed=new Feedback({feedback});
+app.post('/feedback', async (req, res) => {
+    const { feedback } = req.body;
+    try {
+        const feed = new Feedback({ feedback });
         await feed.save();
-             res.status(201).json({ message: "Feedback saved", feedback: feed });
+        res.status(201).json({ message: "Feedback saved", feedback: feed });
 
     } catch (error) {
         res.status(500).json({ message: "Error", error: error.message });
